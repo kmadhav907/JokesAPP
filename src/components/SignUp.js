@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react'
 import { Button, Form, Card, Alert } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useIsMounted } from '../context/UseIsMounted'
 const SignUp = () => {
   const emailRef = useRef()
   const passwordRef = useRef()
@@ -9,7 +10,8 @@ const SignUp = () => {
   const { signup } = useAuth()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-
+  const isMounted = useIsMounted()
+  const history = useHistory()
   const handleSubmit = async (e) => {
     e.preventDefault()
     const email = emailRef.current.value
@@ -24,7 +26,11 @@ const SignUp = () => {
       try {
         setError('')
         setLoading(true)
-        await signup(email, password)
+        await signup(email, password).then((data) => {
+          if (isMounted.current) {
+            history.push('/')
+          }
+        })
       } catch (err) {
         setError('Failed to Create user')
         console.log(err)
