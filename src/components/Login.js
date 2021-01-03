@@ -12,6 +12,7 @@ const Login = () => {
   const { login } = useAuth()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
   const isMounted = useIsMounted()
 
   const handleSubmit = async (e) => {
@@ -23,6 +24,7 @@ const Login = () => {
       setLoading(true)
       await login(email, password).then((data) => {
         if (isMounted.current) {
+          setTimeout(() => {}, 5000)
           history.push('/')
         }
       })
