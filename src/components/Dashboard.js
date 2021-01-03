@@ -3,10 +3,13 @@ import { Card, Button, Alert } from 'react-bootstrap'
 import { Link, useHistory } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useIsMounted } from '../context/UseIsMounted'
+import axios from 'axios'
 
 const Dashboard = () => {
   const { currentUser, logout } = useAuth()
   const [error, setError] = useState('')
+  const [joke, setJoke] = useState('')
+
   const isMounted = useIsMounted()
   const history = useHistory()
   const handleLogout = async () => {
@@ -20,6 +23,20 @@ const Dashboard = () => {
     } catch (e) {
       setError('Failed to logout')
     }
+  }
+  const handleJoke = (e) => {
+    e.preventDefault()
+    setJoke('')
+
+    axios({
+      method: 'get',
+      url: 'https://icanhazdadjoke.com/',
+
+      headers: { Accept: 'text/plain' },
+    }).then((response) => {
+      console.log(response.data)
+      setJoke(response.data)
+    })
   }
 
   return (
@@ -39,6 +56,20 @@ const Dashboard = () => {
         <Button variant='link' onClick={handleLogout}>
           Logout
         </Button>
+        <br />
+        <br />
+        <br />
+        <Button variant='warning' onClick={handleJoke}>
+          Click here for a joke!
+        </Button>
+        <br />
+        <br />
+        {joke ? (
+          <Card>
+            <Card.Title>Joke for you!</Card.Title>
+            <Card.Body>{joke}</Card.Body>
+          </Card>
+        ) : null}
       </div>
     </>
   )
